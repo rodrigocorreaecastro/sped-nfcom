@@ -48,6 +48,7 @@ class Make
     protected $aGIBSCBS = [];
     protected $aGIBSUF = [];
     protected $aGIBSMun = [];
+    protected $avIBS = [];
     protected $aGCBS = [];
     protected $aGTribRegular = [];
     protected $aGIBSCredPres = [];
@@ -1323,8 +1324,7 @@ class Make
         $possible = [
             'item',
             'CST',
-            'indSN',
-            'indSemCST',
+            'indSN'
         ];
         $std = $this->equilizeParameters($std, $possible);
 
@@ -1342,14 +1342,7 @@ class Make
             $std->CSOSN,
             true,
             "[item $std->item] Indica se o contribuinte é Simples Nacional 1=Sim"
-        );
-        $this->dom->addChild(
-            $icmsSN,
-            'indSemCST',
-            $std->indSemCST,
-            true,
-            "[item $std->item] Sem Situação Tributária para o ICMS"
-        );
+        );       
         $this->aICMSSN[$std->item] = $icmsSN;
         return $icmsSN;
     }
@@ -1735,6 +1728,7 @@ class Make
         $possible = [
             'item',
             'vBC',
+            'vIBS'
         ];
         $std = $this->equilizeParameters($std, $possible);
 
@@ -1748,6 +1742,7 @@ class Make
             $identificador . "[item $std->item] Valor da Base de cálculo comum a IBS/CBS"
         );
         $this->aGIBSCBS[$std->item] = $gIBSCBS;
+        $this->avIBS[$std->item] = $std->vIBS;
         return $gIBSCBS;
     }
 
@@ -3492,6 +3487,11 @@ class Make
                     if (!empty($this->aGIBSMun[$nItem])) {
                         $child = $this->aGIBSMun[$nItem];
                         $this->dom->appChild($aGIBSCBS, $child, "Inclusão do node gIBSMun");
+                    }
+                    
+                    if (!empty($this->avIBS[$nItem])) {
+                        $vIBS = $this->avIBS[$nItem];              
+						$this->dom->addChild($aGIBSCBS, "vIBS", $vIBS, false, "Inclusão do node vIBS");
                     }
 
                     if (!empty($this->aGCBS[$nItem])) {
